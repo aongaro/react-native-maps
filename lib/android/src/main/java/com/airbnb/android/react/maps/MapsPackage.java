@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MapsPackage implements ReactPackage {
     public MapsPackage(Activity activity) {
-    } // backwards compatibility
+    } // backwards compatability
 
     public MapsPackage() {
     }
@@ -39,6 +39,7 @@ public class MapsPackage implements ReactPackage {
         AirMapManager mapManager = new AirMapManager(reactContext);
         AirMapLiteManager mapLiteManager = new AirMapLiteManager(reactContext);
         AirMapUrlTileManager tileManager = new AirMapUrlTileManager(reactContext);
+        AirMapOverlayManager overlayManager = new AirMapOverlayManager(reactContext);
 
         return Arrays.<ViewManager>asList(
                 calloutManager,
@@ -48,6 +49,7 @@ public class MapsPackage implements ReactPackage {
                 circleManager,
                 mapManager,
                 mapLiteManager,
-                tileManager);
+                tileManager,
+                overlayManager);
     }
 }
