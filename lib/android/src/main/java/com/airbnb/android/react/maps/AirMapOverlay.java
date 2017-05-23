@@ -128,7 +128,7 @@ public class AirMapOverlay extends AirMapFeature {
     private GroundOverlayOptions createGroundOverlayOptions() {
         GroundOverlayOptions options = new GroundOverlayOptions();
         options.positionFromBounds(boundsLatLng);
-        options.image(getIcon());
+        options.image(image);
         options.visible(visible);
         options.transparency(transparency);
         options.zIndex(zIndex);
