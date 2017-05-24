@@ -83,6 +83,7 @@ public class AirMapOverlay extends AirMapFeature {
                             CloseableReference.closeSafely(imageReference);
                         }
                     }
+                    update();
                 }
             };
 
@@ -162,20 +163,30 @@ public class AirMapOverlay extends AirMapFeature {
         return overlayOptions;
     }
 
-    // private BitmapDescriptor getIcon() {
-    //     if (image != null) {
-    //         // use local image as a marker
-    //         return image;
-    //     } else {
-    //         // render the default marker pin
-    //         return BitmapDescriptorFactory.defaultMarker(this.markerHue);
-    //     }
-    // }
+    private BitmapDescriptor getImage() {
+        if (imgBitmapDescriptor != null) {
+            // use local image as a marker
+            return imgBitmapDescriptor;
+        } else {
+            Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+            Bitmap bmp = Bitmap.createBitmap(100, 200, conf); // this creates a MUTABLE bitmap
+            return BitmapDescriptorFactory.fromBitmap(bmp)
+            // render the default marker pin
+            // return BitmapDescriptorFactory.defaultMarker(this.markerHue);
+        }
+    }
+
+    public void update() {
+        if (overlay == null) {
+            return;
+        }
+        overlay.setImage(getImage());
+    }
 
     private GroundOverlayOptions createGroundOverlayOptions() {
         GroundOverlayOptions options = new GroundOverlayOptions();
         options.positionFromBounds(boundsLatLng);
-        options.image(imgBitmapDescriptor);
+        options.image(getImage());
         options.visible(visible);
         options.transparency(transparency);
         options.zIndex(zIndex);
