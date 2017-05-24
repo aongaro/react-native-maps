@@ -16,6 +16,9 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.common.executors.CallerThreadExecutor;
+
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
@@ -36,6 +39,8 @@ import java.io.IOException;
 
 import javax.annotation.Nullable;
 
+import  android.util.Log;
+
 public class AirMapOverlay extends AirMapFeature {
 
     private GroundOverlayOptions overlayOptions;
@@ -55,6 +60,7 @@ public class AirMapOverlay extends AirMapFeature {
 
     private Bitmap imgBitmap;
     private DataSource<CloseableReference<CloseableImage>> dataSource;
+
     private final ControllerListener<ImageInfo> mLogoControllerListener =
             new BaseControllerListener<ImageInfo>() {
                 @Override
@@ -71,7 +77,7 @@ public class AirMapOverlay extends AirMapFeature {
                                 CloseableStaticBitmap closeableStaticBitmap = (CloseableStaticBitmap) image;
                                 Bitmap bitmap = closeableStaticBitmap.getUnderlyingBitmap();
                                 if (bitmap != null) {
-                                    // bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                                    bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                                     imgBitmap = bitmap;
                                     imgBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
                                 }
@@ -125,6 +131,40 @@ public class AirMapOverlay extends AirMapFeature {
                     .build();
                 ImagePipeline imagePipeline = Fresco.getImagePipeline();
                 dataSource = imagePipeline.fetchDecodedImage(imageRequest, this);
+
+                try {
+                   dataSource.subscribe(new BaseBitmapDataSubscriber() {
+                       @Override
+                       public void onNewResultImpl(@Nullable Bitmap bitmap) {
+                           if (bitmap == null) {
+                               return;
+                           }
+
+                        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                        imgBitmap = bitmap;
+                        imgBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
+                        Log.d("Merda Gesu", "si bmp");
+                           // The bitmap provided to this method is only guaranteed to be around
+                           // for the lifespan of this method. The image pipeline frees the
+                           // bitmap's memory after this method has completed.
+                           //
+                           // This is fine when passing the bitmap to a system process as
+                           // Android automatically creates a copy.
+                           //
+                           // If you need to keep the bitmap around, look into using a
+                           // BaseDataSubscriber instead of a BaseBitmapDataSubscriber.
+                       }
+
+                       @Override
+                       public void onFailureImpl(DataSource dataSource) {
+                       }
+                   }, CallerThreadExecutor.getInstance());
+                } finally {
+                   if (dataSource != null) {
+                       dataSource.close();
+                       update();
+                   }
+                }
                 // URL url = new URL(uri); 
                 // Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream()); 
                 // this.image = BitmapDescriptorFactory.fromBitmap(bmp);
@@ -170,7 +210,7 @@ public class AirMapOverlay extends AirMapFeature {
         } else {
             Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
             Bitmap bmp = Bitmap.createBitmap(100, 200, conf); // this creates a MUTABLE bitmap
-            return BitmapDescriptorFactory.fromBitmap(bmp)
+            return BitmapDescriptorFactory.fromBitmap(bmp);
             // render the default marker pin
             // return BitmapDescriptorFactory.defaultMarker(this.markerHue);
         }
