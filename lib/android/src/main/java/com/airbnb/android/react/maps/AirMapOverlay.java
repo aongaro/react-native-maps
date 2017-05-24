@@ -2,6 +2,7 @@ package com.airbnb.android.react.maps;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.content.Context;
+import android.graphics.drawable.Animatable;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -25,13 +26,15 @@ import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import java.net.URL;
+import android.net.Uri;
 import java.net.MalformedURLException;
 import java.io.IOException;
+
+import javax.annotation.Nullable;
 
 public class AirMapOverlay extends AirMapFeature {
 
@@ -165,20 +168,20 @@ public class AirMapOverlay extends AirMapFeature {
         return overlayOptions;
     }
 
-    private BitmapDescriptor getIcon() {
-        if (image != null) {
-            // use local image as a marker
-            return image;
-        } else {
-            // render the default marker pin
-            return BitmapDescriptorFactory.defaultMarker(this.markerHue);
-        }
-    }
+    // private BitmapDescriptor getIcon() {
+    //     if (image != null) {
+    //         // use local image as a marker
+    //         return image;
+    //     } else {
+    //         // render the default marker pin
+    //         return BitmapDescriptorFactory.defaultMarker(this.markerHue);
+    //     }
+    // }
 
     private GroundOverlayOptions createGroundOverlayOptions() {
         GroundOverlayOptions options = new GroundOverlayOptions();
         options.positionFromBounds(boundsLatLng);
-        options.image(image);
+        options.image(imgBitmapDescriptor);
         options.visible(visible);
         options.transparency(transparency);
         options.zIndex(zIndex);
