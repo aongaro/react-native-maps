@@ -119,8 +119,7 @@ public class AirMapOverlay extends AirMapFeature {
             imgBitmapDescriptor = null;
         } else if (uri.startsWith("http://") || uri.startsWith("https://") ||
                 uri.startsWith("file://")) {
-            try {
-                ImageRequest imageRequest = ImageRequestBuilder
+            ImageRequest imageRequest = ImageRequestBuilder
                     .newBuilderWithSource(Uri.parse(uri))
                     .build();
                 ImagePipeline imagePipeline = Fresco.getImagePipeline();
@@ -131,11 +130,6 @@ public class AirMapOverlay extends AirMapFeature {
                 // if (overlay != null) {
                 //     overlay.setImage(image);
                 // }
-            } catch (MalformedURLException e) {
-                System.err.println("MalformedURLException: " + e.getMessage());
-            } catch (IOException e) {
-                System.err.println("IOException: " + e.getMessage());
-            }
             
         } 
     }
