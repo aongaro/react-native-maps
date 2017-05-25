@@ -67,6 +67,11 @@ public class AirMapOverlayManager extends ViewGroupManager<AirMapOverlay> {
         view.setZIndex(zIndex);
     }
 
+    @ReactProp(name = "bearing", defaultFloat = 0f)
+    public void setBearing(AirMapOverlay view, float bearing) {
+        view.setBearing(bearing);
+    }
+
     @Override
     @Nullable
     public Map getExportedCustomDirectEventTypeConstants() {
