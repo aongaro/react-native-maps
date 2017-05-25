@@ -57,7 +57,7 @@ public class AirMapOverlayManager extends ViewGroupManager<AirMapOverlay> {
         view.setVisible(visible);
     }
 
-    @ReactProp(name = "transparency", defaultFloat = 1.0f)
+    @ReactProp(name = "transparency", defaultFloat = 0f)
     public void setTransparency(AirMapOverlay view, float transparency) {
         view.setTransparency(transparency);
     }
