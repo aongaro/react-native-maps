@@ -17,6 +17,8 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
+import com.facebook.datasource.BaseDataSubscriber;
+import com.facebook.common.executors.CallerThreadExecutor;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
@@ -34,9 +36,14 @@ import com.facebook.drawee.view.DraweeHolder;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.net.URL;
 import android.net.Uri;
+import java.net.MalformedURLException;
+import java.io.IOException;
 
 import javax.annotation.Nullable;
+
+import  android.util.Log;
 
 public class AirMapOverlay extends AirMapFeature {
 
@@ -45,10 +52,10 @@ public class AirMapOverlay extends AirMapFeature {
     private List<LatLng> coordinates;
     private LatLngBounds boundsLatLng;
     
-    private boolean visible;
-    private float transparency;
-    private float zIndex;
-    private float bearing;
+    private boolean visible = true;
+    private float transparency = 0f;
+    private float zIndex = 1.0f; 
+    private float bearing = 0f;
 
     private Bitmap imgBitmap;
     private BitmapDescriptor imgBitmapDescriptor;
@@ -112,9 +119,7 @@ public class AirMapOverlay extends AirMapFeature {
                         this.coordinates.get(0),
                         this.coordinates.get(1)
                     );
-        if (overlay != null) {
-            overlay.setPositionFromBounds(boundsLatLng);
-        }
+        update();
     }
 
     public void setImage(String uri) {
@@ -135,6 +140,7 @@ public class AirMapOverlay extends AirMapFeature {
                 .build();
 
             imageHolder.setController(controller);
+            
         } 
     }
 
@@ -174,12 +180,13 @@ public class AirMapOverlay extends AirMapFeature {
     }
 
     private BitmapDescriptor getImage() {
+
         if (imgBitmapDescriptor != null) {
             return imgBitmapDescriptor;
         } else {
             //default transparent bitmap
-            Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-            Bitmap bmp = Bitmap.createBitmap(400, 400, conf);
+            Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+            Bitmap bmp = Bitmap.createBitmap(400, 400, conf); // this creates a MUTABLE bitmap
             return BitmapDescriptorFactory.fromBitmap(bmp);
         }
     }
@@ -188,6 +195,7 @@ public class AirMapOverlay extends AirMapFeature {
         if (overlay == null) {
             return;
         }
+        overlay.setPositionFromBounds(boundsLatLng);
         overlay.setImage(getImage());
     }
 
