@@ -209,7 +209,6 @@ public class AirMapOverlay extends AirMapFeature {
 
     @Override
     public void addToMap(GoogleMap map) {
-        map.addMarker(new MarkerOptions().position(boundsLatLng.getCenter()));
         overlay = map.addGroundOverlay(getGroundOverlayOptions());
         overlay.setClickable(true);
     }
