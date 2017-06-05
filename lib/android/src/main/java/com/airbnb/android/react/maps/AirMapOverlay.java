@@ -51,10 +51,11 @@ public class AirMapOverlay extends AirMapFeature {
     private GroundOverlay overlay;
     private List<LatLng> coordinates;
     private LatLngBounds boundsLatLng;
-    
+    GoogleMap mapInstance;
+
     private boolean visible = true;
     private float transparency = 0f;
-    private float zIndex = 1.0f; 
+    private float zIndex = 1.0f;
     private float bearing = 0f;
 
     private Bitmap imgBitmap;
@@ -81,6 +82,11 @@ public class AirMapOverlay extends AirMapFeature {
                                     bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                                     imgBitmap = bitmap;
                                     imgBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
+                                    if(overlay == null) {
+                                      overlay = mapInstance.addGroundOverlay(getGroundOverlayOptions());
+                                      overlay.setClickable(true);
+                                    }
+
                                 }
                             }
                         }
@@ -90,7 +96,8 @@ public class AirMapOverlay extends AirMapFeature {
                             CloseableReference.closeSafely(imageReference);
                         }
                     }
-                    update();
+                    if(overlay != null)
+                        update();
                 }
             };
 
@@ -119,7 +126,9 @@ public class AirMapOverlay extends AirMapFeature {
                         this.coordinates.get(0),
                         this.coordinates.get(1)
                     );
-        update();
+        if(overlay != null) {
+            overlay.setPositionFromBounds(boundsLatLng);
+        }
     }
 
     public void setImage(String uri) {
@@ -140,8 +149,8 @@ public class AirMapOverlay extends AirMapFeature {
                 .build();
 
             imageHolder.setController(controller);
-            
-        } 
+
+        }
     }
 
     public void setVisible(boolean visible) {
@@ -195,7 +204,7 @@ public class AirMapOverlay extends AirMapFeature {
         if (overlay == null) {
             return;
         }
-        overlay.setPositionFromBounds(boundsLatLng);
+        // overlay.setPositionFromBounds(boundsLatLng);
         overlay.setImage(getImage());
     }
 
@@ -207,6 +216,7 @@ public class AirMapOverlay extends AirMapFeature {
         options.transparency(transparency);
         options.zIndex(zIndex);
         options.bearing(bearing);
+        options.anchor(0.5f,0.5f);
         return options;
     }
 
@@ -217,8 +227,9 @@ public class AirMapOverlay extends AirMapFeature {
 
     @Override
     public void addToMap(GoogleMap map) {
-        overlay = map.addGroundOverlay(getGroundOverlayOptions());
-        overlay.setClickable(true);
+      mapInstance = map;
+        // overlay = map.addGroundOverlay(getGroundOverlayOptions());
+        // overlay.setClickable(true);
     }
 
     @Override
