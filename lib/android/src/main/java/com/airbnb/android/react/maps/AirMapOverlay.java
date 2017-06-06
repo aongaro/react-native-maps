@@ -81,12 +81,12 @@ public class AirMapOverlay extends AirMapFeature {
                                 if (bitmap != null) {
                                     bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                                     imgBitmap = bitmap;
-                                    imgBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
-                                    if(overlay == null) {
+                                    imgBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(imgBitmap);
+                                      if (mapInstance!=null){
                                       overlay = mapInstance.addGroundOverlay(getGroundOverlayOptions());
                                       overlay.setClickable(true);
+                                      update();
                                     }
-
                                 }
                             }
                         }
@@ -96,8 +96,7 @@ public class AirMapOverlay extends AirMapFeature {
                             CloseableReference.closeSafely(imageReference);
                         }
                     }
-                    if(overlay != null)
-                        update();
+
                 }
             };
 
@@ -135,7 +134,10 @@ public class AirMapOverlay extends AirMapFeature {
         if (uri == null) {
             imgBitmapDescriptor = null;
         } else if (uri.startsWith("http://") || uri.startsWith("https://") ||
-                uri.startsWith("file://")) {
+            uri.startsWith("file://")) {
+            if(overlay != null) {
+              overlay.remove();
+            }
             ImageRequest imageRequest = ImageRequestBuilder
                     .newBuilderWithSource(Uri.parse(uri))
                     .build();
@@ -182,14 +184,11 @@ public class AirMapOverlay extends AirMapFeature {
     }
 
     public GroundOverlayOptions getGroundOverlayOptions() {
-        if (overlayOptions == null) {
-            overlayOptions = createGroundOverlayOptions();
-        }
+        overlayOptions = createGroundOverlayOptions();
         return overlayOptions;
     }
 
     private BitmapDescriptor getImage() {
-
         if (imgBitmapDescriptor != null) {
             return imgBitmapDescriptor;
         } else {
@@ -201,11 +200,13 @@ public class AirMapOverlay extends AirMapFeature {
     }
 
     public void update() {
+      Log.v("BUELO", "update");
+
         if (overlay == null) {
             return;
         }
-        // overlay.setPositionFromBounds(boundsLatLng);
-        overlay.setImage(getImage());
+        overlay.setPositionFromBounds(boundsLatLng);
+        overlay.setBearing(bearing);
     }
 
     private GroundOverlayOptions createGroundOverlayOptions() {
@@ -228,8 +229,9 @@ public class AirMapOverlay extends AirMapFeature {
     @Override
     public void addToMap(GoogleMap map) {
       mapInstance = map;
-        // overlay = map.addGroundOverlay(getGroundOverlayOptions());
-        // overlay.setClickable(true);
+      Log.v("BUELO", "addtomap");
+      overlay = map.addGroundOverlay(getGroundOverlayOptions());
+      overlay.setClickable(true);
     }
 
     @Override
