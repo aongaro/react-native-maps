@@ -9,6 +9,7 @@
 #import <React/RCTImageLoader.h>
 #import <React/RCTUtils.h>
 #import <React/UIView+React.h>
+#import <math.h>
 
 @interface AIRGoogleMapOverlay()
   @property (nonatomic, strong, readwrite) UIImage *overlayImage;
@@ -72,5 +73,12 @@
 
   _overlay.bounds = _overlayBounds;
 }
+
+- (void)setRotation: (double)rotation
+{
+  _rotation = rotation;
+  double diff = rotation + 360.00;
+  _overlay.bearing = fmod(diff,360.00);
+} 
 
 @end

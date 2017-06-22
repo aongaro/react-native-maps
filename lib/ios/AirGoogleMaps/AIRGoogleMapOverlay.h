@@ -17,6 +17,7 @@
 @property (nonatomic, strong, readonly) UIImage *overlayImage;
 @property (nonatomic, copy) NSArray *boundsRect;
 @property (nonatomic, readonly) GMSCoordinateBounds *overlayBounds;
+@property (nonatomic, assign) double rotation;
 
 @property (nonatomic, weak) RCTBridge *bridge;
 
